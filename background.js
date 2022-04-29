@@ -1,8 +1,5 @@
 chrome.runtime.onInstalled.addListener(() => {
     class TimeUrl {
-        constructor() {
-        }
-
         addListeners() {
 			chrome.tabs.onCreated.addListener((tab) => { this.onCreated(tab); });
 			chrome.tabs.onActivated.addListener((activeInfo) => { this.onActivated(activeInfo); });
@@ -11,32 +8,32 @@ chrome.runtime.onInstalled.addListener(() => {
 		}
 
         onCreated(tab) {
-            chrome.storage.local.get(
-                "data",
-                (items) => { console.log(items); });
+            chrome.storage.local.get("data")
+            .then((obj) => {
+                let data = obj.data;
+                if (!(data instanceof Array)) {
+                    data = [];
+                }
+                data.push([tab.id, Date.now()]);
+                chrome.storage.local.set({ data: data });
+            });
         }
 
         onActivated(activeInfo) {}
 
         onRemoved(tabId, removeInfo) {
-            new Promise((resolve, reject) => {
-                chrome.storage.local.get(
-                    "data",
-                    (items) => {
-                        if (chrome.runtime.lastError) {
-                            console.log(chrome.runtime.lastError);
-                            return reject(chrome.runtime.lastError);
-                        }
-                        resolve(items);
-                    });
-            })
-            .then((result) => {
-                let items = result.data;
-                if (!(items instanceof Array)) {
-                    items = [];
+            chrome.storage.local.get("data")
+            .then((obj) => {
+                let data = obj.data;
+                if (!data) {
+                    return;
                 }
-                items.push(tabId);
-                chrome.storage.local.set({ data: items });
+                let item = data.find(item => item[0] == tabId);
+                if (!item) {
+                    return;
+                }
+                item.push(Date.now());
+                chrome.storage.local.set({ data: data });
             });
         }
 

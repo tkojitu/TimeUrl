@@ -4,6 +4,15 @@ Times active URLs.
 
 ## Test
 
+### Ver.2
+
+- onCreated
+  - saves tab id and start time
+- onRemoved
+  - saves end time
+- outputItems
+  - outputs tab id, start time, and end time
+
 ### Ver.1
 
 - add event listeners to chrome.tabs
