@@ -4,6 +4,15 @@ Times active URLs.
 
 ## Test
 
+### Ver.2.2
+
+- onActivated
+  - ends old aDuration
+  - starts new aDuration
+  - saves old Durations
+- onRemoved
+  - removes closed aDuration
+
 ### Ver.2.1
 
 - onCreated

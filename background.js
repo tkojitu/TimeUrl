@@ -2,18 +2,30 @@ chrome.runtime.onInstalled.addListener(() => {
     class Duration {
         constructor(tabId) {
             this.tabId = tabId;
+            this.time = 0;
+            this.st = 0;
+            this.ed = 0;
+        }
+
+        start() {
             this.st = Date.now();
+            this.ed = 0;
+        }
+
+        end() {
+            this.ed = Date.now();
+            this.time += this.ed - this.st;
         }
 
         toArray() {
-            return [this.tabId, Date.now() - this.st];
+            return [this.tabId, this.time];
         }
     }
 
     class TimeUrl {
         constructor () {
             this.items = new Map();
-            this.closed = [];
+            this.currId = 0;
         }
 
         addListeners() {
@@ -27,18 +39,25 @@ chrome.runtime.onInstalled.addListener(() => {
             this.items.set(tab.id, new Duration(tab.id));
         }
 
-        onActivated(activeInfo) {}
+        onActivated(activeInfo) {
+            this.items.get(this.currId)?.end();
+            this.currId = activeInfo.tabId;
+            this.items.get(this.currId)?.start();
+            this.save();
+        }
 
-        onRemoved(tabId, removeInfo) {
-            if (this.items.has(tabId)) {
-                this.closed.push(this.items.get(tabId));
-                this.items.delete(tabId);
-            }
+        save() {
             let ary = [];
             for (let [tabId, dur] of this.items) {
-                ary.push(dur.toArray());
+                if (dur.ed) {
+                    ary.push(dur.toArray());
+                }
             }
             chrome.storage.local.set({ data: ary });
+        }
+
+        onRemoved(tabId, removeInfo) {
+            this.items.delete(tabId);
         }
 
         onUpdated(tabId, changeInfo, tab) {}
