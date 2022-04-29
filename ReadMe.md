@@ -4,6 +4,13 @@ Times active URLs.
 
 ## Test
 
+### Ver.2.1
+
+- onCreated
+  - stores tab id and start time
+- onRemoved
+  - saves [tabId, duration]
+
 ### Ver.2
 
 - onCreated

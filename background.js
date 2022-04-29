@@ -1,5 +1,21 @@
 chrome.runtime.onInstalled.addListener(() => {
+    class Duration {
+        constructor(tabId) {
+            this.tabId = tabId;
+            this.st = Date.now();
+        }
+
+        toArray() {
+            return [this.tabId, Date.now() - this.st];
+        }
+    }
+
     class TimeUrl {
+        constructor () {
+            this.items = new Map();
+            this.closed = [];
+        }
+
         addListeners() {
 			chrome.tabs.onCreated.addListener((tab) => { this.onCreated(tab); });
 			chrome.tabs.onActivated.addListener((activeInfo) => { this.onActivated(activeInfo); });
@@ -8,33 +24,21 @@ chrome.runtime.onInstalled.addListener(() => {
 		}
 
         onCreated(tab) {
-            chrome.storage.local.get("data")
-            .then((obj) => {
-                let data = obj.data;
-                if (!(data instanceof Array)) {
-                    data = [];
-                }
-                data.push([tab.id, Date.now()]);
-                chrome.storage.local.set({ data: data });
-            });
+            this.items.set(tab.id, new Duration(tab.id));
         }
 
         onActivated(activeInfo) {}
 
         onRemoved(tabId, removeInfo) {
-            chrome.storage.local.get("data")
-            .then((obj) => {
-                let data = obj.data;
-                if (!data) {
-                    return;
-                }
-                let item = data.find(item => item[0] == tabId);
-                if (!item) {
-                    return;
-                }
-                item.push(Date.now());
-                chrome.storage.local.set({ data: data });
-            });
+            if (this.items.has(tabId)) {
+                this.closed.push(this.items.get(tabId));
+                this.items.delete(tabId);
+            }
+            let ary = [];
+            for (let [tabId, dur] of this.items) {
+                ary.push(dur.toArray());
+            }
+            chrome.storage.local.set({ data: ary });
         }
 
         onUpdated(tabId, changeInfo, tab) {}

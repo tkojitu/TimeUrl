@@ -6,11 +6,7 @@ function outputItems(items) {
 		if (!item) continue;
         let parent = document.getElementById("data");
         let child = document.createElement("p");
-		let html = "" + item[0] + ": " + item[1];
-		if (item[2]) {
-			html += ".." + item[2];
-		}
-        child.innerHTML = html;
+        child.innerHTML = "" + item[0] + ": " + item[1];
         parent.appendChild(child);
     }
 }
