@@ -4,6 +4,29 @@ Times active URLs.
 
 ## Test
 
+### Ver.3
+
+### Usecase
+
+* New tab
+* Input URL
+* Close tab
+
+#### New tab
+
+- onCreated
+  - does nothing
+- onActivated
+  - remembers the activated tab id
+  - retrieves the previous aDuration by previous tab id
+  - ends aDurtion
+  - saves aDurations
+- onUpdated
+  - binds the current tab id to URL
+  - starts aDuration if tab id is for current tab
+- onRemoved
+  - does nothing
+
 ### Ver.2.2
 
 - onActivated

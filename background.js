@@ -1,7 +1,7 @@
 chrome.runtime.onInstalled.addListener(() => {
     class Duration {
-        constructor(tabId) {
-            this.tabId = tabId;
+        constructor(url) {
+            this.url = url;
             this.time = 0;
             this.st = 0;
             this.ed = 0;
@@ -18,13 +18,14 @@ chrome.runtime.onInstalled.addListener(() => {
         }
 
         toArray() {
-            return [this.tabId, this.time];
+            return [this.url, this.time];
         }
     }
 
     class TimeUrl {
         constructor () {
-            this.items = new Map();
+            this.tabIdToUrl = new Map();
+            this.urlToDur = new Map();
             this.currId = 0;
         }
 
@@ -36,19 +37,24 @@ chrome.runtime.onInstalled.addListener(() => {
 		}
 
         onCreated(tab) {
-            this.items.set(tab.id, new Duration(tab.id));
         }
 
         onActivated(activeInfo) {
-            this.items.get(this.currId)?.end();
+            let prevId = this.currId;
             this.currId = activeInfo.tabId;
-            this.items.get(this.currId)?.start();
+            this.getUrl(prevId)?.end();
+            this.getUrl(this.currId)?.start();
             this.save();
+        }
+
+        getUrl(tabId) {
+            let url = this.tabIdToUrl.get(tabId);
+            return this.urlToDur.get(url);
         }
 
         save() {
             let ary = [];
-            for (let [tabId, dur] of this.items) {
+            for (let [url, dur] of this.urlToDur) {
                 if (dur.ed) {
                     ary.push(dur.toArray());
                 }
@@ -57,10 +63,20 @@ chrome.runtime.onInstalled.addListener(() => {
         }
 
         onRemoved(tabId, removeInfo) {
-            this.items.delete(tabId);
         }
 
-        onUpdated(tabId, changeInfo, tab) {}
+        onUpdated(tabId, changeInfo, tab) {
+            if (!changeInfo.url) {
+                return;
+            }
+            this.tabIdToUrl.set(tabId, changeInfo.url);
+            if (!this.urlToDur.has(tabId)) {
+                this.urlToDur.set(changeInfo.url, new Duration(changeInfo.url));
+            }
+            if (tabId == this.currId) {
+                this.urlToDur.get(changeInfo.url).start();
+            }
+        }
     }
 
     new TimeUrl().addListeners();
