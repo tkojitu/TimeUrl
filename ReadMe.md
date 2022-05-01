@@ -4,15 +4,25 @@ Times active URLs.
 
 ## Test
 
+### Ver.3.1
+
++ toTimeString
+
 ### Ver.3
 
-### Usecase
+#### Usecase 2
+
+* New tab
+* Input URL
+* Switch tab
+
+#### Usecase 1
 
 * New tab
 * Input URL
 * Close tab
 
-#### New tab
+#### Testcase
 
 - onCreated
   - does nothing
