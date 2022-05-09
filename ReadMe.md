@@ -4,6 +4,10 @@ A chrome extension that times active URLs.
 
 ## Test
 
+### Ver.3.2
+
++ Strip URL query.
+
 ### Ver.3.1
 
 - toTimeString

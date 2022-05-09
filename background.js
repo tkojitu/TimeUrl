@@ -80,12 +80,13 @@ chrome.runtime.onInstalled.addListener(() => {
             if (!changeInfo.url) {
                 return;
             }
-            this.tabIdToUrl.set(tabId, changeInfo.url);
+            let url = changeInfo.url.replace(/\?.*/, "");
+            this.tabIdToUrl.set(tabId, url);
             if (!this.urlToDur.has(tabId)) {
-                this.urlToDur.set(changeInfo.url, new Duration(changeInfo.url));
+                this.urlToDur.set(url, new Duration(url));
             }
             if (tabId == this.currId) {
-                this.urlToDur.get(changeInfo.url).start();
+                this.urlToDur.get(url).start();
             }
         }
     }
