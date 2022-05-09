@@ -18,16 +18,18 @@ chrome.runtime.onInstalled.addListener(() => {
         }
 
         toArray() {
-            return [this.url, this.toTimeString()];
+            return [this.url, this.toTimeString(this.time)];
         }
 
-        toTimeString() {
-            let sec = this.time / 1000;
+        toTimeString(msec) {
+            let sec = msec / 1000;
             let min = sec / 60;
             sec = sec % 60;
+            let ss = sec.toFixed().padStart(2, '0');
             let hour = min / 60;
             min = min % 60;
-            return "" + hour.toFixed() + ":" + min.toFixed() + ":" + sec.toFixed();
+            let ms = min.toFixed().padStart(2, '0');
+            return hour.toFixed() + ":" + ms + ":" + ss;
         }
     }
 

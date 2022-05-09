@@ -6,7 +6,7 @@ Times active URLs.
 
 ### Ver.3.1
 
-+ toTimeString
+- toTimeString
 
 ### Ver.3
 
