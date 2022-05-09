@@ -1,6 +1,6 @@
 # TimeUrl
 
-Times active URLs.
+A chrome extension that times active URLs.
 
 ## Test
 
