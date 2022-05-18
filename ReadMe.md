@@ -4,9 +4,29 @@ A chrome extension that times active URLs.
 
 ## Test
 
+### Ver.3.4
+
+#### Usecase
+
+* Open two tabs that have same URL
+
+### Ver.3.3
+
+#### Usecase
+
+* Center-click a link to open a new tab
+* Activate the new tab
+* Switch to another tab
+
+#### Testcase
+
+- onCreated
+  - binds tab id to pendingUrl
+  - binds URL to new Duration (not start).
+
 ### Ver.3.2
 
-+ Strip URL query.
+- Strip URL query.
 
 ### Ver.3.1
 

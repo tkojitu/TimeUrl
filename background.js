@@ -48,17 +48,18 @@ chrome.runtime.onInstalled.addListener(() => {
 		}
 
         onCreated(tab) {
+            this.update(tab.id, tab.pendingUrl);
         }
 
         onActivated(activeInfo) {
             let prevId = this.currId;
             this.currId = activeInfo.tabId;
-            this.getUrl(prevId)?.end();
-            this.getUrl(this.currId)?.start();
+            this.getDuration(prevId)?.end();
+            this.getDuration(this.currId)?.start();
             this.save();
         }
 
-        getUrl(tabId) {
+        getDuration(tabId) {
             let url = this.tabIdToUrl.get(tabId);
             return this.urlToDur.get(url);
         }
@@ -80,14 +81,23 @@ chrome.runtime.onInstalled.addListener(() => {
             if (!changeInfo.url) {
                 return;
             }
-            let url = changeInfo.url.replace(/\?.*/, "");
+            let url = this.update(tabId, changeInfo.url);
+            if (tabId == this.currId) {
+                this.urlToDur.get(url).start();
+            }
+        }
+
+        update(tabId, rawUrl) {
+            let url = this.deleteQuery(rawUrl);
             this.tabIdToUrl.set(tabId, url);
             if (!this.urlToDur.has(tabId)) {
                 this.urlToDur.set(url, new Duration(url));
             }
-            if (tabId == this.currId) {
-                this.urlToDur.get(url).start();
-            }
+            return url;
+        }
+
+        deleteQuery(url) {
+            return url.replace(/\?.*/, "");
         }
     }
 
